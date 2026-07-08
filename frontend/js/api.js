@@ -2,7 +2,7 @@
  * API Service Module for Flask Backend Integration with MongoDB Atlas
  */
 const ApiService = {
-    baseURL: 'http://127.0.0.1:5000/api/',
+    baseURL: 'https://centralize-system.onrender.com/api/',
     
     getToken: () => {
         const user = localStorage.getItem('nexus_current_user');
