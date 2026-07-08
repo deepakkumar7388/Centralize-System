@@ -328,7 +328,7 @@ const Utils = {
         formData.append('file', file);
         const token = Auth.getCurrentUser()?.token;
 
-        const response = await fetch('http://127.0.0.1:5000/api/upload', {
+        const response = await fetch('https://centralize-system.onrender.com/api/upload', {
             method: 'POST',
             headers: token ? { 'Authorization': `Bearer ${token}` } : {},
             body: formData
@@ -342,7 +342,7 @@ const Utils = {
     buildAttachmentLinks: (attachments) => {
         if (!attachments || attachments.length === 0) return '';
         return attachments.map(a => `
-            <a href="http://127.0.0.1:5000/api/uploads/${a.filename}" 
+            <a href="https://centralize-system.onrender.com/api/uploads/${a.filename}" 
                target="_blank" 
                style="display:inline-flex;align-items:center;gap:4px;font-size:0.8rem;
                       color:#6366f1;text-decoration:none;border:1px solid #c7d2fe;
