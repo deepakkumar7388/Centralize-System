@@ -37,12 +37,13 @@ try:
         print("Connected to local MongoDB!")
     else:
         print(f"Connecting to MongoDB Atlas...")
-        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, tls=True, tlsAllowInvalidCertificates=True)
         client.server_info()  # Trigger connection check
         print("Connected to MongoDB Atlas successfully!")
     db = client['nexus_system']
 except Exception as e:
     print(f"MongoDB connection failed: {e}")
+
     print("Trying local MongoDB as final fallback...")
     client = MongoClient('mongodb://localhost:27017/')
     db = client['nexus_system']
