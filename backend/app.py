@@ -30,23 +30,29 @@ app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB limit
 MONGO_URI = os.environ.get('MONGO_URI', '')
 try:
     if not MONGO_URI or '<db_password>' in MONGO_URI:
-        # No valid URI provided, fallback to local MongoDB
         print("No valid MONGO_URI found. Trying local MongoDB...")
         client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=3000)
-        client.server_info()  # Trigger connection check
+        client.server_info()
         print("Connected to local MongoDB!")
     else:
-        print(f"Connecting to MongoDB Atlas...")
-        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000, tls=True, tlsAllowInvalidCertificates=True)
+        print(f"Connecting to MongoDB Atlas... URI exists.")
+        # Render has issues with TLS SNI checks sometimes, we force tlsAllowInvalidCertificates
+        client = MongoClient(
+            MONGO_URI, 
+            serverSelectionTimeoutMS=10000, 
+            connectTimeoutMS=10000,
+            tls=True, 
+            tlsAllowInvalidCertificates=True
+        )
         client.server_info()  # Trigger connection check
         print("Connected to MongoDB Atlas successfully!")
     db = client['nexus_system']
 except Exception as e:
     print(f"MongoDB connection failed: {e}")
-
-    print("Trying local MongoDB as final fallback...")
-    client = MongoClient('mongodb://localhost:27017/')
+    # Force client initialization anyway to avoid crash during API usage
+    client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
     db = client['nexus_system']
+
 
 # Collections
 users_col = db['users']
