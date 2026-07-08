@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus | Centralized Institutional System</title>
+    <link rel="icon" type="image/x-icon" href="logo-1.png">
+
+    <!-- ===== SEO Meta Tags ===== -->
+    <meta name="description" content="Nexus Centralized System — Manage institutional meetings, events, policies, and announcements with role-based access control and MongoDB Atlas cloud storage.">
+    <meta name="keywords" content="nexus system, institutional management, meeting management, event management, policy management, announcements, centralized system">
+    <meta name="author" content="Nexus System">
+    <meta name="robots" content="index, follow">
+
+    <!-- ===== Open Graph / Facebook ===== -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nexus-system.web.app/">
+    <meta property="og:title" content="Nexus | Centralized Institutional System">
+    <meta property="og:description" content="Manage institutional meetings, events, policies, and announcements with role-based access control.">
+    <meta property="og:image" content="logo-1.png">
+    <meta property="og:site_name" content="Nexus System">
+
+    <!-- ===== Twitter Card ===== -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Nexus | Centralized Institutional System">
+    <meta property="twitter:description" content="Manage institutional meetings, events, policies, and announcements with role-based access control.">
+    <meta property="twitter:image" content="logo-1.png">
+
+    <!-- ===== JSON-LD Structured Data ===== -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Nexus Centralized System",
+        "description": "Centralized system for managing institutional records including meetings, events, policies, and announcements.",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "All",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+        }
+    }
+    </script>
+
+    <!-- ===== Google Fonts ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- ===== Font Awesome ===== -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- ===== App Stylesheets ===== -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        /* ============================================================
+           AUTH SCREEN — SPLIT PANEL DESIGN
+        ============================================================ */
+        #authScreen {
+            display: none;
+            min-height: 100vh;
+            font-family: 'Outfit', 'Inter', sans-serif;
+            background: #f0f2ff;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        #authScreen.active { display: flex; }
+        #appScreen { display: none; }
+        #appScreen.active { display: block; }
+
+        /* Auth Box — split card */
+        .auth-box {
+            display: flex;
+            width: 900px;
+            max-width: 100%;
+            min-height: 560px;
+            background: #fff;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 60px rgba(99, 102, 241, 0.18), 0 8px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Left Overlay Panel */
+        .auth-overlay-panel {
+            width: 40%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            flex-shrink: 0;
+        }
+        .auth-overlay-panel::before {
+            content: '';
+            position: absolute;
+            width: 300px; height: 300px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            top: -80px; right: -80px;
+        }
+        .auth-overlay-panel::after {
+            content: '';
+            position: absolute;
+            width: 200px; height: 200px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            bottom: -50px; left: -50px;
+        }
+        .auth-overlay-content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-overlay-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
+        }
+        .auth-overlay-logo .logo-icon {
+            width: 56px; height: 56px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem;
+            backdrop-filter: blur(10px);
+        }
+        .auth-overlay-content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .auth-overlay-content p {
+            font-size: 0.9rem;
+            opacity: 0.88;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .overlay-switch-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.6);
+            padding: 0.65rem 2.5rem;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .overlay-switch-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Right Form Panel */
+        .auth-form-panel {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2.5rem;
+        }
+        .auth-form-inner {
+            width: 100%;
+            max-width: 380px;
+        }
+        .auth-panel { display: none; }
+        .auth-panel.active { display: block; animation: fadeInUp 0.4s ease; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-form-inner h2 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        .auth-form-inner .auth-subtitle-text {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        /* Alert Banners */
+        .auth-alert {
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .auth-alert.active { display: flex; animation: slideDown 0.3s ease; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .auth-alert-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .auth-alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        /* ===== Floating Label Inputs ===== */
+        .floating-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .floating-group input {
+            width: 100%;
+            padding: 1.2rem 1rem 0.5rem 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.75rem;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            color: #1e293b;
+            background: #fff;
+            transition: all 0.25s ease;
+            outline: none;
+        }
+        .floating-group input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+        .floating-group input:focus + label,
+        .floating-group input:not(:placeholder-shown) + label {
+            top: 0.45rem;
+            font-size: 0.72rem;
+            color: #6366f1;
+            font-weight: 600;
+        }
+        .floating-group label {
+            position: absolute;
+            left: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.875rem;
+            color: #94a3b8;
+            pointer-events: none;
+            transition: all 0.25s ease;
+            background: white;
+            padding: 0 4px;
+        }
+        .floating-group .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1rem;
+            pointer-events: none;
+            transition: color 0.25s;
+        }
+        .floating-group input:focus ~ .input-icon { color: #6366f1; }
+        .floating-group .pw-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none;
+            color: #94a3b8; cursor: pointer;
+            font-size: 1rem; padding: 0.25rem;
+            transition: color 0.2s;
+        }
+        .floating-group .pw-toggle:hover { color: #6366f1; }
+
+        /* Auth Button */
+        .auth-btn {
+            width: 100%;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99,102,241,0.35);
+            letter-spacing: 0.3px;
+        }
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99,102,241,0.45);
+        }
+        .auth-btn:active { transform: translateY(0); }
+
+        /* Forgot Password Link */
+        .forgot-link {
+            text-align: right;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+        }
+        .forgot-link a {
+            font-size: 0.8125rem;
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .forgot-link a:hover { color: #4f46e5; text-decoration: underline; }
+
+        /* Form help text */
+        .form-help { font-size: 0.75rem; color: #94a3b8; margin-top: 0.35rem; }
+
+        /* ===== Forgot Password Modal ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            animation: fadeOverlay 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .forgot-modal {
+            background: white;
+            border-radius: 1.25rem;
+            padding: 2.5rem;
+            width: 420px;
+            max-width: calc(100vw - 2rem);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+            animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .forgot-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .forgot-modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .modal-close-btn {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 0.5rem;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .modal-close-btn:hover { background: #fee2e2; color: #ef4444; }
+        .forgot-modal p {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .forgot-modal .floating-group { margin-bottom: 1.25rem; }
+        .forgot-submit-btn {
+            width: 100%;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99,102,241,0.3);
+        }
+        .forgot-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99,102,241,0.4);
+        }
+
+        /* ===== Mobile Responsive ===== */
+        @media (max-width: 700px) {
+            .auth-box {
+                flex-direction: column;
+                min-height: auto;
+                border-radius: 1rem;
+            }
+            .auth-overlay-panel {
+                width: 100%;
+                min-height: 180px;
+                padding: 2rem 1.5rem;
+                border-radius: 0;
+            }
+            .auth-overlay-logo { font-size: 1.5rem; }
+            .auth-overlay-content h2 { font-size: 1.25rem; }
+            .auth-overlay-content p { display: none; }
+            .overlay-switch-btn { padding: 0.5rem 2rem; }
+            .auth-form-panel { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+         AUTH SCREEN — SPLIT PANEL
+    ============================================================ -->
+    <div id="authScreen" class="active">
+        <div class="auth-box">
+
+            <!-- Left: Overlay Panel -->
+            <div class="auth-overlay-panel" id="authOverlay">
+                <div class="auth-overlay-content">
+                    <div class="auth-overlay-logo">
+                        <div class="logo-icon"><i class="fas fa-layer-group"></i></div>
+                        <span>Nexus</span>
+                    </div>
+                    <h2 id="overlayTitle">Welcome Back!</h2>
+                    <p id="overlayText">Enter your credentials to access your institutional dashboard and manage records.</p>
+                    <button class="overlay-switch-btn" id="overlayBtn" onclick="switchAuthPanel('signup')">Sign Up</button>
+                </div>
+            </div>
+
+            <!-- Right: Form Panel -->
+            <div class="auth-form-panel">
+                <div class="auth-form-inner">
+
+                    <!-- Alert Messages -->
+                    <div class="auth-alert auth-alert-success" id="successAlert">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="successMessage"></span>
+                    </div>
+                    <div class="auth-alert auth-alert-error" id="errorAlert">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="errorMessage"></span>
+                    </div>
+
+                    <!-- LOGIN PANEL -->
+                    <div class="auth-panel active" id="loginPanel">
+                        <h2>Sign In</h2>
+                        <p class="auth-subtitle-text">Access your Nexus dashboard</p>
+
+                        <form id="loginFormElement">
+                            <!-- Username — Floating Label -->
+                            <div class="floating-group">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" id="loginUsername" placeholder=" " required autocomplete="username">
+                                <label for="loginUsername">Username</label>
+                            </div>
+
+                            <!-- Password — Floating Label -->
+                            <div class="floating-group">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="loginPassword" placeholder=" " required autocomplete="current-password">
+                                <label for="loginPassword">Password</label>
+                                <button type="button" class="pw-toggle" onclick="togglePw('loginPassword', this)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <!-- Forgot Password -->
+                            <div class="forgot-link">
+                                <a href="javascript:void(0)" onclick="openForgotModal()">Forgot Password?</a>
+                            </div>
+
+                            <button type="submit" class="auth-btn" id="loginBtn">
+                                <i class="fas fa-sign-in-alt"></i> Sign In
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- SIGNUP PANEL -->
+                    <div class="auth-panel" id="signupPanel">
+                        <h2>Create Account</h2>
+                        <p class="auth-subtitle-text">Join your institutional system</p>
+
+                        <form id="signupFormElement">
+                            <!-- Full Name -->
+                            <div class="floating-group">
+                                <i class="fas fa-user-circle input-icon"></i>
+                                <input type="text" id="signupName" placeholder=" " required autocomplete="name">
+                                <label for="signupName">Full Name</label>
+                            </div>
+
+                            <!-- Username -->
+                            <div class="floating-group">
+                                <i class="fas fa-user input-icon"></i>
+                                <input type="text" id="signupUsername" placeholder=" " required autocomplete="username">
+                                <label for="signupUsername">Username</label>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="floating-group">
+                                <i class="fas fa-lock input-icon"></i>
+                                <input type="password" id="signupPassword" placeholder=" " required minlength="6" autocomplete="new-password">
+                                <label for="signupPassword">Password (min. 6 chars)</label>
+                                <button type="button" class="pw-toggle" onclick="togglePw('signupPassword', this)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <button type="submit" class="auth-btn" id="signupBtn">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         FORGOT PASSWORD MODAL
+    ============================================================ -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="forgot-modal">
+            <div class="forgot-modal-header">
+                <h3><i class="fas fa-key" style="color:#6366f1;margin-right:0.5rem;"></i>Reset Password</h3>
+                <button class="modal-close-btn" onclick="closeForgotModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p>Enter your registered username and we'll process your password reset request.</p>
+
+            <div class="auth-alert auth-alert-success" id="forgotSuccessAlert" style="margin-bottom:1rem;">
+                <i class="fas fa-check-circle"></i>
+                <span id="forgotSuccessMsg"></span>
+            </div>
+            <div class="auth-alert auth-alert-error" id="forgotErrorAlert" style="margin-bottom:1rem;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="forgotErrorMsg"></span>
+            </div>
+
+            <form id="forgotForm">
+                <div class="floating-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="forgotUsername" placeholder=" " required autocomplete="username">
+                    <label for="forgotUsername">Username</label>
+                </div>
+                <div class="floating-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="forgotNewPassword" placeholder=" " required minlength="6" autocomplete="new-password">
+                    <label for="forgotNewPassword">New Password</label>
+                    <button type="button" class="pw-toggle" onclick="togglePw('forgotNewPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <button type="submit" class="forgot-submit-btn">
+                    <i class="fas fa-shield-alt"></i> Reset Password
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         APP SCREEN (Dashboard)
+    ============================================================ -->
+    <div id="appScreen">
+        <div class="app-container">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="logo">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Nexus</span>
+                    </div>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <a href="#" class="nav-item active" data-page="dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="meetings">
+                        <i class="fas fa-users"></i>
+                        <span>Meetings</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="events">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Events</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="policies">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Policies</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="announcements">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Announcements</span>
+                    </a>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <div class="user-profile" id="userProfile">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">User</div>
+                            <div class="user-role" id="userRole">Role</div>
+                        </div>
+                    </div>
+                    <button class="btn-icon" id="logoutBtn" title="Logout" onclick="App.logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <header class="top-header">
+                    <div class="header-left">
+                        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                    </div>
+                    <div class="header-right">
+                        <div class="search-container">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search meetings, events, policies..." id="globalSearch">
+                        </div>
+                        <button class="btn-icon notification-btn" id="notificationBtn">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge" id="notificationBadge" style="display:none;">0</span>
+                        </button>
+                        <button class="btn-icon settings-btn" id="settingsBtn">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <div class="page-content" id="pageContent">
+                    <!-- Loaded dynamically -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Notifications Modal -->
+        <div class="modal" id="notificationModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Notifications</h3>
+                    <button class="btn-close" data-modal="notificationModal"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body" id="notificationList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SCRIPTS
+    ============================================================ -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/permissions.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/meetings.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/policies.js"></script>
+    <script src="js/announcements.js"></script>
+    <script src="js/uploads.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        /* ============================================================
+           AUTH UI CONTROLLER
+        ============================================================ */
+        let currentPanel = 'login';
+
+        function switchAuthPanel(panel) {
+            currentPanel = panel;
+            document.getElementById('loginPanel').classList.toggle('active', panel === 'login');
+            document.getElementById('signupPanel').classList.toggle('active', panel === 'signup');
+            clearAlerts();
+
+            // Update overlay text
+            if (panel === 'signup') {
+                document.getElementById('overlayTitle').textContent = 'Hello, Friend!';
+                document.getElementById('overlayText').textContent = 'Already have an account? Sign in to continue managing your records.';
+                document.getElementById('overlayBtn').textContent = 'Sign In';
+                document.getElementById('overlayBtn').onclick = () => switchAuthPanel('login');
+            } else {
+                document.getElementById('overlayTitle').textContent = 'Welcome Back!';
+                document.getElementById('overlayText').textContent = 'Enter your credentials to access your institutional dashboard.';
+                document.getElementById('overlayBtn').textContent = 'Sign Up';
+                document.getElementById('overlayBtn').onclick = () => switchAuthPanel('signup');
+            }
+        }
+
+        function clearAlerts() {
+            document.getElementById('successAlert').classList.remove('active');
+            document.getElementById('errorAlert').classList.remove('active');
+        }
+
+        function togglePw(id, btn) {
+            const input = document.getElementById(id);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        /* ===== Forgot Password Modal ===== */
+        function openForgotModal() {
+            document.getElementById('forgotModal').classList.add('active');
+            document.getElementById('forgotForm').reset();
+            document.getElementById('forgotSuccessAlert').classList.remove('active');
+            document.getElementById('forgotErrorAlert').classList.remove('active');
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgotModal').classList.remove('active');
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('forgotModal').addEventListener('click', function(e) {
+            if (e.target === this) closeForgotModal();
+        });
+
+        // Forgot password form submit
+        document.getElementById('forgotForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('forgotUsername').value.trim();
+            const newPassword = document.getElementById('forgotNewPassword').value;
+            const btn = this.querySelector('button[type="submit"]');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/auth/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, new_password: newPassword })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('forgotSuccessAlert').classList.add('active');
+                    document.getElementById('forgotSuccessMsg').textContent = 'Password reset successful! You can now login.';
+                    document.getElementById('forgotErrorAlert').classList.remove('active');
+                    document.getElementById('forgotForm').reset();
+                    setTimeout(() => closeForgotModal(), 2500);
+                } else {
+                    document.getElementById('forgotErrorAlert').classList.add('active');
+                    document.getElementById('forgotErrorMsg').textContent = data.message || 'User not found. Check the username.';
+                    document.getElementById('forgotSuccessAlert').classList.remove('active');
+                }
+            } catch (err) {
+                document.getElementById('forgotErrorAlert').classList.add('active');
+                document.getElementById('forgotErrorMsg').textContent = 'Cannot connect to server.';
+                document.getElementById('forgotSuccessAlert').classList.remove('active');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-shield-alt"></i> Reset Password';
+            }
+        });
+
+        /* ===== Screen Show/Hide (called from auth.js) ===== */
+        function showAppScreen() {
+            document.getElementById('authScreen').classList.remove('active');
+            document.getElementById('appScreen').classList.add('active');
+        }
+
+        function showAuthScreen() {
+            document.getElementById('appScreen').classList.remove('active');
+            document.getElementById('authScreen').classList.add('active');
+            document.getElementById('loginFormElement').reset();
+            document.getElementById('signupFormElement').reset();
+            clearAlerts();
+        }
+
+        /* ===== On Page Load ===== */
+        window.addEventListener('DOMContentLoaded', () => {
+            const userData = localStorage.getItem('nexus_current_user');
+            if (userData) {
+                showAppScreen();
+            } else {
+                showAuthScreen();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+# Prevent direct access to uploads directory
+Deny from all
+
+# Allow specific file types
+<FilesMatch "\.(jpg|jpeg|png|gif|pdf|doc|docx|xls|xlsx|ppt|pptx|txt|zip|rar)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Prevent PHP execution
+<Files *.php>
+    Deny from all
+</Files>
+
+# File size limits
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+php_value max_execution_time 300
+php_value max_input_time 300
