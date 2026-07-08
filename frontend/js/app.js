@@ -84,8 +84,28 @@ const App = {
 
                 // Load page
                 App.loadPage(page);
+
+                // Auto close sidebar on mobile navigation
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                if (sidebar && sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
             });
         });
+    },
+
+    /**
+     * Toggle Mobile Sidebar
+     */
+    toggleSidebar: () => {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (sidebar) {
+            sidebar.classList.toggle('open');
+            if (overlay) overlay.classList.toggle('active');
+        }
     },
 
     /**

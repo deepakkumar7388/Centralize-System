@@ -367,6 +367,7 @@ body {
 @media (max-width: 768px) {
     .main-content {
         margin-left: 0;
+        width: 100%;
     }
     
     .search-container {
@@ -380,4 +381,65 @@ body {
     .page-content {
         padding: var(--spacing-md);
     }
+    
+    /* Layout components adjustments */
+    .stats-grid, .analytics-grid, .quick-actions-grid, .bottom-grid {
+        grid-template-columns: 1fr !important;
+        gap: var(--spacing-md);
+    }
+    
+    /* Forms inside modals */
+    form div[style*="display: grid"], form div[style*="display:grid"] {
+        grid-template-columns: 1fr !important;
+        gap: 0.5rem !important;
+    }
+    
+    .action-item-row {
+        grid-template-columns: 1fr !important;
+        gap: 6px !important;
+        padding: 10px 0 !important;
+        border-bottom: 2px solid #e2e8f0;
+    }
+    
+    /* Tables responsiveness */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .data-table {
+        min-width: 600px;
+    }
+    
+    /* Modals dynamic widths */
+    .modal-content {
+        width: 95% !important;
+        margin: var(--spacing-md) auto !important;
+        padding: var(--spacing-md) !important;
+    }
+    
+    /* Split Screen Auth UI adjustments */
+    .auth-box {
+        flex-direction: column;
+        min-height: auto;
+        width: 100%;
+        border-radius: 0;
+    }
+    
+    .auth-form-side, .auth-overlay-panel {
+        width: 100% !important;
+        padding: var(--spacing-xl) !important;
+    }
+    
+    .auth-overlay-panel {
+        display: none !important; /* Hide left decor panel on mobile login */
+    }
+    
+    .auth-form-side {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
 }
+

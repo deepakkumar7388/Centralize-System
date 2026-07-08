@@ -580,6 +580,7 @@
          APP SCREEN (Dashboard)
     ============================================================ -->
     <div id="appScreen">
+        <div class="sidebar-overlay-bg" id="sidebarOverlay" onclick="App.toggleSidebar()"></div>
         <div class="app-container">
             <!-- Sidebar Navigation -->
             <aside class="sidebar" id="sidebar">
@@ -631,6 +632,9 @@
             <main class="main-content">
                 <header class="top-header">
                     <div class="header-left">
+                        <button class="btn-icon" id="sidebarToggle" style="display: none; margin-right: 12px; z-index: 250;" onclick="App.toggleSidebar()">
+                            <i class="fas fa-bars"></i>
+                        </button>
                         <h1 class="page-title" id="pageTitle">Dashboard</h1>
                     </div>
                     <div class="header-right">

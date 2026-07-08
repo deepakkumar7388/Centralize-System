@@ -163,8 +163,20 @@
 }
 
 /* ==========================================
-   RESPONSIVE SIDEBAR
+   RESPONSIVE SIDEBAR & MOBILE TRIGGERS
    ========================================== */
+
+.sidebar-overlay-bg {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 199;
+}
 
 @media (max-width: 768px) {
     .sidebar {
@@ -174,5 +186,13 @@
 
     .sidebar.open {
         transform: translateX(0);
+    }
+    
+    #sidebarToggle {
+        display: flex !important;
+    }
+    
+    .sidebar-overlay-bg.active {
+        display: block;
     }
 }
