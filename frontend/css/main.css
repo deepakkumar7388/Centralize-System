@@ -441,5 +441,14 @@ body {
         flex-direction: column;
         justify-content: center;
     }
+
+    .mobile-switch-link {
+        display: block !important;
+    }
 }
+
+.mobile-switch-link {
+    display: none;
+}
+
 
